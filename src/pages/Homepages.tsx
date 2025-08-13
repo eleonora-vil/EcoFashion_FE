@@ -316,6 +316,7 @@ export default function Homepage() {
                   Nhà Cung Cấp
                 </Typography>
               </Button>
+
               <Button
                 variant="outlined"
                 sx={{
@@ -326,7 +327,7 @@ export default function Homepage() {
                   textAlign: "center",
                   justifyContent: "center",
                 }}
-                href="/register"
+                href="/signup"
               >
                 <Box
                   sx={{
@@ -412,37 +413,6 @@ export default function Homepage() {
           <Box>
             <Box
               component="img"
-              src={post}
-              sx={{ width: "100%", height: "60%" }}
-            />
-            <Typography variant="h5" fontWeight="bold" sx={{ mt: 2 }}>
-              Cho mọi người thấy sự sáng tạo của bạn
-            </Typography>
-            <Stack direction="row" alignItems="center" sx={{ mt: 1 }}>
-              <Button
-                variant="text"
-                sx={{
-                  fontSize: 25,
-                  fontWeight: "bold",
-                  color: "rgba(52,168,83,1)",
-                  textTransform: "none",
-                }}
-              >
-                Đăng Sản Phẩm
-                <svg
-                  viewBox="0 0 32 32"
-                  width={30}
-                  style={{ fill: "rgba(52,168,83,1)", marginLeft: 8 }}
-                >
-                  <path d="M22,9a1,1,0,0,0,0,1.42l4.6,4.6H3.06a1,1,0,1,0,0,2H26.58L22,21.59A1,1,0,0,0,22,23a1,1,0,0,0,1.41,0l6.36-6.36a.88.88,0,0,0,0-1.27L23.42,9A1,1,0,0,0,22,9Z" />
-                </svg>
-              </Button>
-            </Stack>
-          </Box>
-
-          <Box>
-            <Box
-              component="img"
               src={fashion}
               sx={{ width: "100%", height: "60%" }}
             />
@@ -491,7 +461,7 @@ export default function Homepage() {
                   textTransform: "none",
                 }}
               >
-                Mua Bán
+                Khám Phá
                 <svg
                   viewBox="0 0 32 32"
                   width={30}
@@ -516,42 +486,18 @@ export default function Homepage() {
           products={designs}
           title="SẢN PHẨM NỔI BẬT"
           type="special"
-          onProductSelect={(product) => {
-            console.log("Selected product:", product.name);
-            // TODO: Navigate to product detail or open modal
-          }}
-          onAddToCart={(product) => {
-            console.log("Add to cart:", product.name);
-            // TODO: Add to cart logic
-          }}
-          onToggleFavorite={(product) => {
-            console.log("Toggle favorite:", product.name);
-            // TODO: Toggle favorite logic
-          }}
           onViewMore={() => "/fashion"}
         />
         <Divider
           sx={{ height: "2px", backgroundColor: "black", opacity: "20%" }}
         />
         {/* Bán Chạy Nhất */}
-        <FashionsSection
+        {/* <FashionsSection
           products={designs}
           title="BÁN CHẠY NHẤT"
           type="special"
-          onProductSelect={(product) => {
-            console.log("Selected product:", product.name);
-            // TODO: Navigate to product detail or open modal
-          }}
-          onAddToCart={(product) => {
-            console.log("Add to cart:", product.name);
-            // TODO: Add to cart logic
-          }}
-          onToggleFavorite={(product) => {
-            console.log("Toggle favorite:", product.name);
-            // TODO: Toggle favorite logic
-          }}
           onViewMore={() => "/fashion"}
-        />
+        /> */}
         <Divider
           sx={{ height: "2px", backgroundColor: "black", opacity: "20%" }}
         />
@@ -629,7 +575,7 @@ export default function Homepage() {
               bgcolor: "#00a651",
               "&:hover": { bgcolor: "#008b45" },
             }}
-            onClick={() => navigate("/explore")}
+            onClick={() => navigate("/businessinfor")}
           >
             Tìm hiểu thêm ➞
           </Button>
@@ -677,19 +623,22 @@ export default function Homepage() {
             justifyContent="center"
             flexWrap="wrap"
           >
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "white",
-                color: "rgba(52, 168, 83, 1)",
-                "&:hover": {
-                  backgroundColor: "#f0f0f0",
-                },
-                fontWeight: "bold",
-              }}
-            >
-              Đăng Ký
-            </Button>
+            {!user && (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "white",
+                  color: "rgba(52, 168, 83, 1)",
+                  "&:hover": {
+                    backgroundColor: "#f0f0f0",
+                  },
+                  fontWeight: "bold",
+                }}
+                onClick={() => navigate("/signup")}
+              >
+                Đăng Ký
+              </Button>
+            )}
             <Button
               variant="outlined"
               sx={{
@@ -719,7 +668,6 @@ export default function Homepage() {
           </Stack>
         </Container>
       </Box>
-      
     </Box>
   );
 }

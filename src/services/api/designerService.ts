@@ -126,7 +126,7 @@ export class DesignerService {
    */
   static async updateDesignerProfile(
     profileData: UpdateDesignerRequest
-  ): Promise<void> {
+  ): Promise<DesignerProfile> {
     try {
       const response = await apiClient.put<BaseApiResponse<string>>(
         `${this.API_BASE}/profile`,

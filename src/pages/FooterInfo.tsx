@@ -49,24 +49,42 @@ function FooterInfo() {
             Quick Links
           </Typography>
           <Box component="ul" sx={{ listStyle: "none", p: 0 }}>
-            {["Home", "Our Story", "Contact Us", "Register"].map((text) => (
-              <li key={text}>
-                <Link
-                  href={`/${text.replace(" ", "").toLowerCase()}`}
-                  color="inherit"
-                  underline="hover"
-                  sx={{
-                    display: "inline-block",
-                    transition: "color 0.3s",
-                    "&:hover": {
-                      color: "#90caf9",
-                    },
-                  }}
-                >
-                  {text}
-                </Link>
-              </li>
-            ))}
+            {["Home", "Our Story", "Contact Us"].map((text) => {
+              let link = "/";
+              switch (text) {
+                case "Home":
+                  link = "/";
+                  break;
+                case "Our Story":
+                  link = "/about";
+                  break;
+                case "Contact Us":
+                  link = "/contact";
+                  break;
+
+                default:
+                  link = "/";
+              }
+
+              return (
+                <li key={text}>
+                  <Link
+                    href={link}
+                    color="inherit"
+                    underline="hover"
+                    sx={{
+                      display: "inline-block",
+                      transition: "color 0.3s",
+                      "&:hover": {
+                        color: "#90caf9",
+                      },
+                    }}
+                  >
+                    {text}
+                  </Link>
+                </li>
+              );
+            })}
           </Box>
         </Box>
 

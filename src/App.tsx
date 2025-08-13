@@ -49,13 +49,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import BusinessInfor from "./pages/BusinessInfor";
 import Cart from "./pages/shop/cart";
-import CheckoutPage from "./pages/checkout";
-import CheckoutResultPage from "./pages/checkout/result";
-import OrdersPage from "./pages/shop/OrdersPage";
-import OrdersDetails from "./components/orders/OrdersDetails";
-import OrdersList from "./components/orders/OrdersList";
-
-//import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -87,43 +80,13 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
-
-        
-         {/* ===== CHECKOUT and ORDERS ROUTES ===== */}
-<Route
-  path="/checkout"
-  element={
-    <ProtectedRoute allowedRoles={['customer','supplier','designer']}>
-      <CheckoutPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/checkout/result"
-  element={
-    <ProtectedRoute allowedRoles={['customer','supplier','designer']}>
-      <CheckoutResultPage />
-    </ProtectedRoute>
-  }
-/>
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute allowedRoles={['customer','supplier','designer']}>
-              <OrdersPage />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<OrdersList />} />
-          <Route path=":orderId" element={<OrdersDetails />} />
-        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
 
         {/* ===== DESIGN and MATERIAL ROUTES ===== */}
         <Route path="/fashion" element={<FashionList />} />
-        <Route path="/detail/:id" element={<DesignDetail />} />
+        <Route path="/detail/:id/:designerId" element={<DesignDetail />} />
         <Route path="/brand/:id" element={<DesingBrandProfile />} />
         <Route path="/material/:id" element={<MaterialDetailPage />} />
 

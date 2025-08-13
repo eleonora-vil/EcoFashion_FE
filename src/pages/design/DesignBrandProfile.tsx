@@ -175,7 +175,7 @@ export default function DesingBrandProfile() {
           // Count design types
           const counts: Record<string, number> = {};
           data.forEach((design: any) => {
-            const typeName = design.designTypeName || "Khác"; // fallback if null/undefined
+            const typeName = design.itemTypeName || "Khác"; // fallback if null/undefined
             counts[typeName] = (counts[typeName] || 0) + 1;
           });
           setTypeCounts(counts);
@@ -214,7 +214,7 @@ export default function DesingBrandProfile() {
 
     const typeMatch =
       activeTypes.length === 0 ||
-      activeTypes.includes(product.designTypeName || "Khác");
+      activeTypes.includes(product.itemTypeName || "Khác");
 
     return colorMatch && typeMatch;
   });
@@ -226,7 +226,7 @@ export default function DesingBrandProfile() {
 
     const typeMatch =
       selectedTypes.length === 0 ||
-      selectedTypes.includes(product.designTypeName || "Khác");
+      selectedTypes.includes(product.itemTypeName || "Khác");
 
     return colorMatch && typeMatch;
   });
@@ -425,7 +425,7 @@ export default function DesingBrandProfile() {
               {designer.designerName}
             </Typography>
 
-            <Typography
+            {/* <Typography
               sx={{ width: "100%", fontSize: "15px", opacity: "50%" }}
             >
               Online 3 phút trước
@@ -433,7 +433,7 @@ export default function DesingBrandProfile() {
             <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
               <Button variant="outlined">+ Theo dõi</Button>
               <Button variant="outlined">Chat</Button>
-            </Stack>
+            </Stack> */}
           </Box>
         </Grid>
         <Grid
@@ -458,9 +458,19 @@ export default function DesingBrandProfile() {
                       fontSize: "20px",
                     }}
                   >
-                    Đánh Giá:
+                    Tham Gia:
                   </Typography>
-                  <Typography sx={{ fontSize: "20px" }}>80k</Typography>
+                  <Typography sx={{ fontSize: "20px" }}>
+                    {" "}
+                    {(() => {
+                      const yearsAgo =
+                        new Date().getFullYear() -
+                        new Date(designer.createdAt).getFullYear();
+                      return yearsAgo === 0
+                        ? "Mới năm nay"
+                        : `${yearsAgo} năm trước`;
+                    })()}
+                  </Typography>
                 </Box>
               </Grid>
               <Grid size={6}>
@@ -472,9 +482,11 @@ export default function DesingBrandProfile() {
                       fontSize: "20px",
                     }}
                   >
-                    Tham Gia:
+                    Đánh Giá:
                   </Typography>
-                  <Typography sx={{ fontSize: "20px" }}>4 năm trước</Typography>
+                  <Typography sx={{ fontSize: "20px" }}>
+                    Đang Tính Toán
+                  </Typography>
                 </Box>
               </Grid>
               <Grid size={6}>
@@ -488,7 +500,9 @@ export default function DesingBrandProfile() {
                   >
                     Sản Phẩm:
                   </Typography>
-                  <Typography sx={{ fontSize: "20px" }}>800</Typography>
+                  <Typography sx={{ fontSize: "20px" }}>
+                    {designs.length}
+                  </Typography>
                 </Box>
               </Grid>
               <Grid size={6}>
@@ -502,7 +516,9 @@ export default function DesingBrandProfile() {
                   >
                     Người Theo Dõi:
                   </Typography>
-                  <Typography sx={{ fontSize: "20px" }}>100k</Typography>
+                  <Typography sx={{ fontSize: "20px" }}>
+                    Đang Tính Toán
+                  </Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -522,14 +538,7 @@ export default function DesingBrandProfile() {
           Giới Thiệu
         </Typography>
         <Typography sx={{ fontSize: "18px", marginLeft: "20px" }}>
-          Nguyễn Công Trí là một trong những nhà thiết kế thời trang hàng đầu
-          Việt Nam, được biết đến với phong cách sáng tạo độc đáo và tinh tế.
-          Anh là người sáng lập thương hiệu thời trang cao cấp mang tên mình và
-          đã ghi dấu ấn trên nhiều sàn diễn quốc tế như Tokyo Fashion Week, New
-          York Fashion Week. Với khả năng kết hợp hài hòa giữa yếu tố truyền
-          thống và hiện đại, các thiết kế của Nguyễn Công Trí không chỉ tôn vinh
-          vẻ đẹp của người phụ nữ Việt mà còn chinh phục giới mộ điệu thời trang
-          toàn cầu.
+          {designer.bio}
         </Typography>
       </Box>
       <Divider />
@@ -666,7 +675,7 @@ export default function DesingBrandProfile() {
                 Qui Định
               </Button>
             </Stack>
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -700,7 +709,7 @@ export default function DesingBrandProfile() {
               >
                 <GridSearchIcon />
               </IconButton>
-            </Box>
+            </Box> */}
           </Box>
         </AppBar>
         {/* Section */}
@@ -799,32 +808,7 @@ export default function DesingBrandProfile() {
                     </Box>
                   </AccordionDetails>
                 </Accordion>
-                {Object.entries(filterOptions).map(([title, options]) => (
-                  <React.Fragment key={title}>
-                    <Accordion
-                      disableGutters
-                      elevation={0}
-                      sx={{ boxShadow: "none" }}
-                    >
-                      <AccordionSummary expandIcon={<GridExpandMoreIcon />}>
-                        <Typography fontSize={16}>{title}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <FormGroup>
-                          {options.map((item, index) => (
-                            <FormControlLabel
-                              key={index}
-                              control={<Checkbox />}
-                              label={`${item.label} (${item.count})`}
-                              sx={{ mb: 0.5, alignItems: "center" }}
-                            />
-                          ))}
-                        </FormGroup>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Divider />
-                  </React.Fragment>
-                ))}
+
                 {/* Bottom Button */}
                 <Box mt={6}>
                   <Button
@@ -846,7 +830,7 @@ export default function DesingBrandProfile() {
                       handleScroll("items");
                     }}
                   >
-                    {selectedColors.length > 0
+                    {selectedTypes.length > 0
                       ? `Xem ${previewFilteredProducts.length} sản phẩm`
                       : "Xem Tất Cả Sản Phẩm"}
                   </Button>
@@ -1012,7 +996,7 @@ export default function DesingBrandProfile() {
                   Năm Gia Nhập EcoFashion
                 </Typography>
                 <Typography sx={{ fontWeight: "bold", fontSize: "30px" }}>
-                  2024
+                  {new Date(designer.createdAt).getFullYear()}
                 </Typography>
               </Box>
             </Box>

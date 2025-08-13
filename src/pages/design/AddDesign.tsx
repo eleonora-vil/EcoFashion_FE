@@ -97,7 +97,6 @@ const AddDesign = () => {
       setLoading(true);
       setError(null);
       const data = await DesignService.getStoredMaterial(getDesignerId());
-      console.log("Stored Material:", data);
       setStoredMaterial(data);
     } catch (error: any) {
       const errorMessage =

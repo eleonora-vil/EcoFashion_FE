@@ -64,7 +64,6 @@ export default function DesignsList() {
     try {
       setLoading(true);
       setError(null);
-      // const data = await DesignService.getAllDesign();
       const total = await DesignService.getAllDesign();
       setTotalPage(Math.ceil(total.length / pageSize));
       const data = await DesignService.getAllDesignPagination(
@@ -74,7 +73,7 @@ export default function DesignsList() {
       // Count design types
       const counts: Record<string, number> = {};
       total.forEach((design: any) => {
-        const typeName = design.designTypeName || "Khác"; // fallback if null/undefined
+        const typeName = design.itemTypeName || "Khác"; // fallback if null/undefined
         counts[typeName] = (counts[typeName] || 0) + 1;
       });
 
@@ -108,12 +107,6 @@ export default function DesignsList() {
 
   //filter color
   const colorCounts: Record<string, number> = {};
-
-  // products.forEach((product: any) => {
-  //   product.colors.forEach((color: string) => {
-  //     colorCounts[color] = (colorCounts[color] || 0) + 1;
-  //   });
-  // });
 
   const dynamicColorFilterOptions = Object.entries(colorCounts).map(
     ([label, count]) => ({
@@ -155,21 +148,7 @@ export default function DesignsList() {
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
-  const filterOptions = {
-    Loại: [
-      { label: "Áo", count: 24 },
-      { label: "Quần", count: 14 },
-      { label: "Đầm", count: 19 },
-      { label: "Váy", count: 19 },
-    ],
 
-    "Chất Liệu": [
-      { label: "Cotton", count: 36 },
-      { label: "Linen", count: 28 },
-      { label: "Tencel", count: 15 },
-      { label: "Recycled Polyester", count: 11 },
-    ],
-  };
   //filter by color
   const [showSorted, setShowSorted] = useState(false);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -187,7 +166,7 @@ export default function DesignsList() {
 
     const typeMatch =
       activeTypes.length === 0 ||
-      activeTypes.includes(product.designTypeName || "Khác");
+      activeTypes.includes(product.itemTypeName || "Khác");
 
     return colorMatch && typeMatch;
   });
@@ -198,7 +177,7 @@ export default function DesignsList() {
 
     const typeMatch =
       selectedTypes.length === 0 ||
-      selectedTypes.includes(product.designTypeName || "Khác");
+      selectedTypes.includes(product.itemTypeName || "Khác");
 
     return colorMatch && typeMatch;
   });
@@ -501,7 +480,7 @@ export default function DesignsList() {
                             handleScroll("items");
                           }}
                         >
-                          {selectedColors.length > 0
+                          {selectedTypes.length > 0
                             ? `Xem ${previewFilteredProducts.length} sản phẩm`
                             : "Xem Tất Cả Sản Phẩm"}
                         </Button>

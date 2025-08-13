@@ -29,20 +29,20 @@ import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import DesignServicesOutlinedIcon from "@mui/icons-material/DesignServicesOutlined";
-import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
-import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import AddIcon from "@mui/icons-material/Add";
-import { EcoIcon } from "../../assets/icons/icon";
+import {
+  DressIcon,
+  EcoIcon,
+  ShirtIcon,
+  SkirtIcon,
+  TrouserIcon,
+} from "../../assets/icons/icon";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import AirIcon from "@mui/icons-material/Air";
 import CompostIcon from "@mui/icons-material/Compost";
 import CloseIcon from "@mui/icons-material/Close";
-//Example
-import ao_linen from "../../assets/pictures/example/ao-linen.webp";
-import chan_vay_dap from "../../assets/pictures/example/chan-vay-dap.webp";
-import dam_con_trung from "../../assets/pictures/example/dam-con-trung.webp";
 
 //Chart
 import { Line } from "react-chartjs-2";
@@ -56,7 +56,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import DesignService, { Design } from "../../services/api/designService";
+import DesignService, {
+  Design,
+  StoredMaterial,
+} from "../../services/api/designService";
 import { toast } from "react-toastify";
 import { useAuthStore } from "../../store/authStore";
 
@@ -103,36 +106,7 @@ export default function DesignerDashBoard() {
       color: "secondary.main",
     },
   ];
-  const material_stats = [
-    {
-      title: "Tổng Vật Liệu",
-      value: "24",
-      subtitle: "Tổng Tất Cả Các Loại Chất Liệu",
-      icon: <LocalMallOutlinedIcon />,
-      color: "success.main",
-    },
-    {
-      title: "Tổng Tiền Vật Liệu",
-      value: "3.800.000đ",
-      subtitle: "Tổng Số Tiền Đã Chi",
-      icon: <TrendingUpIcon />,
-      color: "info.main",
-    },
-    {
-      title: "Vật Liệu Sắp Hết",
-      value: "24",
-      subtitle: "Loại Cần Đặt",
-      icon: <StarIcon />,
-      color: "warning.main",
-    },
-    {
-      title: "Tổng Mét Vải Hiện Có",
-      value: "24",
-      subtitle: "Mét Vải Hiện Có Trong Kho",
-      icon: <GroupIcon />,
-      color: "warning.main",
-    },
-  ];
+
   const fashion_stats = [
     {
       title: "Tổng Thiết Kế",
@@ -216,6 +190,8 @@ export default function DesignerDashBoard() {
 
   //Design Data
   const [designs, setDesigns] = useState<Design[]>([]);
+  //Material Data
+  const [storedMaterial, setStoredMaterial] = useState<StoredMaterial[]>([]);
   //Loading
   const [loading, setLoading] = useState(true);
   //Error
@@ -229,8 +205,16 @@ export default function DesignerDashBoard() {
     try {
       setLoading(true);
       setError(null);
-      const data = await DesignService.getAllDesignByDesigner(getDesignerId());
-      setDesigns(data);
+      const designData = await DesignService.getAllDesignByDesigner(
+        getDesignerId()
+      );
+      setDesigns(designData);
+
+      const materialData = await DesignService.getStoredMaterial(
+        getDesignerId()
+      );
+      setStoredMaterial(materialData);
+      console.log("Stored Material: ", materialData);
     } catch (error: any) {
       const errorMessage =
         error.message || "Không thể tải danh sách nhà thiết kế";
@@ -290,189 +274,38 @@ export default function DesignerDashBoard() {
     setTabIndex(newValue);
   };
 
-  // const pageSize = 6;
-  // const [pagination, setPagination] = useState({
-  //   from: 0,
-  //   to: pageSize,
-  // });
-
-  // const handlePagination = (event: any, page: number) => {
-  //   const from = (page - 1) * pageSize;
-  //   const to = from + pageSize;
-  //   setPagination({ from, to });
-  // };
-
-  // const displayedProducts = designs.slice(pagination.from, pagination.to);
-
-  const DesignCard = ({ product }: { product: any }) => (
-    <Card
-      sx={{
-        width: "80%",
-        margin: "0 auto",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        transition: "all 0.3s ease",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: 3,
-        },
-      }}
-    >
-      {/* Recycled Chip */}
-      <Box
-        sx={{
-          p: 1,
-          position: "absolute",
-          top: 8,
-          left: 8,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Chip
-          icon={<EcoIcon />}
-          label={`${product.recycledPercentage}% Bền Vững`}
-          size="small"
-          sx={{
-            backgroundColor: "rgba(200, 248, 217, 1)",
-            color: "rgba(22, 103, 86, 1)",
-            fontSize: "15px",
-          }}
-        />
-      </Box>
-
-      {/* Dynamic Height Image */}
-      <Box width="100%" sx={{ overflow: "hidden" }}>
-        <Link style={{ display: "flex", justifyContent: "center" }}>
-          <CardMedia
-            component="img"
-            image={product.image}
-            alt={product.title}
-            sx={{ width: "100%", height: "auto", objectFit: "contain" }}
-          />
-        </Link>
-      </Box>
-
-      {/* Content */}
-      <CardContent sx={{ textAlign: "left" }}>
-        <Typography
-          fontWeight="bold"
-          sx={{
-            fontSize: "30px",
-            width: "100%",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {product.title}
-        </Typography>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography fontWeight="bold" mt={1} sx={{ opacity: "50%" }}>
-            Đã Bán Được: {product.sale_quantity} sản phẩm
-          </Typography>
-          <Typography fontWeight="bold" mt={1}>
-            {product.price}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", gap: 3 }}>
-          <Button variant="contained" fullWidth sx={{ mt: 1, flex: 1 }}>
-            Chỉnh Sửa
-          </Button>
-          <Button variant="outlined" fullWidth sx={{ mt: 1, flex: 1 }}>
-            Chi Tiết
-          </Button>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-
-  const materials = [
-    {
-      id: 1,
-      material: "Cotton Fabric",
-      quantity: "500m",
-      status: "Còn Hàng",
-      supplier: "ABC Textiles Co.",
-      costPerUnit: "3.000đ",
-      totalValue: "1.750.000đ",
-      lastUpdated: "2025-07-01",
-    },
-    {
-      id: 2,
-      material: "Steel Rods",
-      quantity: "200m",
-      status: "Còn Ít Hàng",
-      supplier: "Global Steels Ltd.",
-      costPerUnit: "12.000đ",
-      totalValue: "2.400.000đ",
-      lastUpdated: "2025-06-30",
-    },
-    {
-      id: 3,
-      material: "Plastic Pellets",
-      quantity: "1000m",
-      status: "Còn Hàng",
-      supplier: "PolySource Inc.",
-      costPerUnit: "1.250.000đ",
-      totalValue: "1.250.000đ",
-      lastUpdated: "2025-07-02",
-    },
-    {
-      id: 4,
-      material: "Screws (M5)",
-      quantity: "5000m",
-      status: "Còn Hàng",
-      supplier: "BoltMaster Supplies",
-      costPerUnit: "50.000đ",
-      totalValue: "250.000đ",
-      lastUpdated: "2025-07-02",
-    },
-    {
-      id: 5,
-      material: "Leather Sheets",
-      quantity: "120m",
-      status: "Hết Hàng",
-      supplier: "Urban Leathers Co.",
-      costPerUnit: "7.000đ",
-      totalValue: "840.000đ",
-      lastUpdated: "2025-06-28",
-    },
-    {
-      id: 6,
-      material: "Copper Wire",
-      quantity: "300m",
-      status: "Còn Hàng",
-      supplier: "WireWorks Industries",
-      costPerUnit: "56.000đ",
-      totalValue: "1.680.000đ",
-      lastUpdated: "2025-07-01",
-    },
-    {
-      id: 7,
-      material: "Cardboard Boxes",
-      quantity: "1500m",
-      status: "Còn Hàng",
-      supplier: "PackPro Ltd.",
-      costPerUnit: "40.000đ",
-      totalValue: "600.000đ",
-      lastUpdated: "2025-07-02",
-    },
-    {
-      id: 8,
-      material: "Rubber Seals",
-      quantity: "800m",
-      status: "Còn Ít Hàng",
-      supplier: "SealTech Corp.",
-      costPerUnit: "75.000đ",
-      totalValue: "600.000đ",
-      lastUpdated: "2025-06-29",
-    },
-  ];
-
-  const columns: GridColDef<(typeof materials)[number]>[] = [
+  const generateMockMaterial = (inventory: StoredMaterial[]) => {
+    return inventory.map((inventory) => ({
+      id: inventory.materialId,
+      material: inventory.material.name,
+      quantity: inventory.quantity,
+      status:
+        inventory.quantity <= 0
+          ? "Hết Hàng"
+          : inventory.quantity < 30
+          ? "Sắp Hết Hàng"
+          : "Còn Hàng",
+      supplier: inventory.material.supplierName,
+      costPerUnit: new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(inventory.material.pricePerUnit * 1000),
+      totalValue: new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(inventory.cost),
+      creatAt: new Date(inventory.lastBuyDate).toLocaleString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+    }));
+  };
+  type MaterialRow = ReturnType<typeof generateMockMaterial>[number];
+  const material_columns: GridColDef<MaterialRow>[] = [
     { field: "id", headerName: "ID", width: 90 },
     {
       field: "material",
@@ -482,7 +315,7 @@ export default function DesignerDashBoard() {
     },
     {
       field: "quantity",
-      headerName: "Số Lượng",
+      headerName: "Số Lượng (m)",
       width: 110,
       flex: 1,
     },
@@ -493,24 +326,24 @@ export default function DesignerDashBoard() {
       renderCell: (params) => {
         let color:
           | "default"
-          | "primary"
+          | "warning"
           | "secondary"
           | "error"
           | "info"
           | "success"
-          | "warning" = "default";
+          | "primary" = "default";
         switch (params.value) {
-          case "in stock":
+          case "Còn Hàng":
             color = "success";
             break;
-          case "low stock":
+          case "Sắp Hết Hàng":
             color = "warning";
             break;
-          case "out of stock":
+          case "Hết Hàng":
             color = "error";
             break;
           default:
-            color = "default";
+            color = "primary";
         }
 
         return <Chip label={params.value} color={color} size="small" />;
@@ -536,7 +369,7 @@ export default function DesignerDashBoard() {
       flex: 1,
     },
     {
-      field: "lastUpdated",
+      field: "creatAt",
       headerName: "Ngày Cập Nhật",
       width: 150,
       flex: 1,
@@ -604,20 +437,39 @@ export default function DesignerDashBoard() {
     return designs.map((design) => ({
       id: design.designId,
       title: design.name,
-      author: design.designer.designerName || "Không rõ",
-      image: design.imageUrls[0] || "", // hoặc ảnh mặc định
+      image: design.designImageUrls[0] || "", // hoặc ảnh mặc địn
       price: new Intl.NumberFormat("vi-VN", {
         style: "currency",
         currency: "VND",
       }).format(design.salePrice),
-      rating: design.productScore || 4,
       recycledPercentage: design.recycledPercentage,
       material: design.materials?.map((mat) => mat.materialName) || [],
-      sale_quantity: 13,
-      status: design.status || "Không rõ",
-      stage: design.stage || "Không rõ",
+      typeName: design.itemTypeName,
     }));
   };
+
+  const getCategoryColor = (category?: string): string => {
+    if (!category) return "#9e9e9e"; // default grey
+    const colors: Record<string, string> = {
+      Áo: "#2196f3",
+      Quần: "#ff9800",
+      Đầm: "#4caf50",
+      Váy: "#9c27b0",
+    };
+    return colors[category.normalize("NFC")] || "#9e9e9e";
+  };
+
+  const getCategoryIcon = (category?: string) => {
+    if (!category) return null;
+    const icons: Record<string, React.ReactNode> = {
+      Áo: <ShirtIcon />,
+      Quần: <TrouserIcon />,
+      Đầm: <DressIcon />,
+      Váy: <SkirtIcon />,
+    };
+    return icons[category.normalize("NFC")] || null;
+  };
+
   type FashionRow = ReturnType<typeof generateMockProducts>[number];
 
   const fashion_columns: GridColDef<FashionRow>[] = [
@@ -664,61 +516,6 @@ export default function DesignerDashBoard() {
       flex: 1,
     },
     {
-      field: "status",
-      headerName: "Trạng Thái",
-      width: 110,
-      renderCell: (params) => {
-        let color:
-          | "default"
-          | "primary"
-          | "secondary"
-          | "error"
-          | "info"
-          | "success"
-          | "warning" = "default";
-        let text: "Lỗi" | "Còn Hàng" | "Còn Ít Hàng" | "Hết Hàng" = "Lỗi";
-        switch (params.value) {
-          case "in stock":
-            color = "success";
-            text = "Còn Hàng";
-            break;
-          case "low stock":
-            color = "warning";
-            text = "Còn Ít Hàng";
-            break;
-          case "out of stock":
-            color = "error";
-            text = "Hết Hàng";
-            break;
-          default:
-            color = "default";
-            text = "Lỗi";
-        }
-
-        return <Chip label={params.value} color={color} size="small" />;
-      },
-      flex: 1,
-    },
-    {
-      field: "rating",
-      headerName: "Đánh Giá",
-      width: 110,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Rating
-            name="text-feedback"
-            value={params.value}
-            readOnly
-            precision={0.5}
-            emptyIcon={
-              <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-            }
-          />
-        );
-      },
-    },
-    {
       field: "recycledPercentage",
       headerName: "Điểm Bền Vững",
       width: 110,
@@ -739,16 +536,39 @@ export default function DesignerDashBoard() {
       },
     },
     {
-      field: "sale_quantity",
-      headerName: "Bán Được",
+      field: "typeName",
+      headerName: "Loại Thời Trang",
       width: 110,
       flex: 1,
-    },
-    {
-      field: "stage",
-      headerName: "Stage",
-      width: 110,
-      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Chip
+            // label={product.category.toUpperCase()}
+            icon={
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                {getCategoryIcon(params.row.typeName)}
+              </Box>
+            }
+            label={params.row.typeName}
+            size="small"
+            sx={{
+              bgcolor: getCategoryColor(params.row.typeName),
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "1rem",
+              paddingTop: 2,
+              paddingBottom: 2,
+            }}
+          />
+        );
+      },
     },
     {
       field: "actions",
@@ -785,6 +605,47 @@ export default function DesignerDashBoard() {
         );
       },
       flex: 1,
+    },
+  ];
+
+  const totalMaterials = storedMaterial.length;
+  const totalCost = storedMaterial.reduce(
+    (sum, m) => sum + m.material.pricePerUnit * 1000 * m.quantity,
+    0
+  );
+  const lowStockCount = storedMaterial.filter(
+    (m) => m.quantity > 0 && m.quantity < 30
+  ).length;
+  const totalMeters = storedMaterial.reduce((sum, m) => sum + m.quantity, 0);
+
+  const material_stats = [
+    {
+      title: "Tổng Vật Liệu",
+      value: totalMaterials,
+      subtitle: "Tổng Tất Cả Các Loại Chất Liệu",
+      icon: <LocalMallOutlinedIcon />,
+      color: "success.main",
+    },
+    {
+      title: "Tổng Tiền Vật Liệu",
+      value: totalCost.toLocaleString("vi-VN") + "đ",
+      subtitle: "Tổng Số Tiền Đã Chi",
+      icon: <TrendingUpIcon />,
+      color: "info.main",
+    },
+    {
+      title: "Vật Liệu Sắp Hết",
+      value: lowStockCount,
+      subtitle: "Loại Cần Đặt",
+      icon: <StarIcon />,
+      color: "warning.main",
+    },
+    {
+      title: "Tổng Mét Vải Hiện Có",
+      value: totalMeters.toLocaleString("vi-VN"),
+      subtitle: "Mét Vải Hiện Có Trong Kho",
+      icon: <GroupIcon />,
+      color: "warning.main",
     },
   ];
 
@@ -887,6 +748,16 @@ export default function DesignerDashBoard() {
         >
           <Tab
             label="Trang chủ"
+            sx={{
+              flex: 1,
+              "&.Mui-selected": {
+                color: "rgba(22, 163, 74)", // Màu khi được chọn
+                fontWeight: "bold", // Tuỳ chọn: in đậm
+              },
+            }}
+          />
+          <Tab
+            label="Sản Phẩm"
             sx={{
               flex: 1,
               "&.Mui-selected": {
@@ -1143,7 +1014,8 @@ export default function DesignerDashBoard() {
           </Box>
         </Box>
       )}
-      {/* Tab Sản Phẩm  */}
+
+      {/* Tab Sản Phẩm */}
       {tabIndex === 1 && (
         <Box sx={{ width: "100%" }}>
           {/* Material Stat */}
@@ -1246,8 +1118,60 @@ export default function DesignerDashBoard() {
           </BootstrapDialog>
         </Box>
       )}
-      {/* Tab Vật Liệu*/}
+
+      {/* Tab Thời Trang  */}
       {tabIndex === 2 && (
+        <Box sx={{ width: "100%" }}>
+          {/* Table */}
+          <DataGrid
+            rows={generateMockProducts(designs)}
+            columns={fashion_columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
+            disableRowSelectionOnClick
+            sx={{
+              width: "100%", // or set a fixed px width like "800px"
+            }}
+          />
+          <BootstrapDialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={open}
+          >
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={(theme) => ({
+                position: "absolute",
+                right: 8,
+                top: 8,
+                color: theme.palette.grey[500],
+              })}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            <img
+              src={selectedImage || ""}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "80vh",
+                borderRadius: 10,
+              }}
+            />
+          </BootstrapDialog>
+        </Box>
+      )}
+
+      {/* Tab Vật Liệu*/}
+      {tabIndex === 3 && (
         <Box sx={{ width: "100%" }}>
           {/* Material Stat */}
           <Box
@@ -1288,8 +1212,8 @@ export default function DesignerDashBoard() {
           </Box>
           {/* Table */}
           <DataGrid
-            rows={materials}
-            columns={columns}
+            rows={generateMockMaterial(storedMaterial)}
+            columns={material_columns}
             initialState={{
               pagination: {
                 paginationModel: {
@@ -1389,6 +1313,7 @@ export default function DesignerDashBoard() {
           <Stack spacing={2} marginBottom={3}>
             {messages.map((item, index) => (
               <Button
+                key={index}
                 variant="outlined"
                 sx={{
                   borderColor: "rgba(0,0,0,0.1)",
@@ -1461,6 +1386,7 @@ export default function DesignerDashBoard() {
           <Stack spacing={2} marginBottom={3}>
             {orders.map((item, index) => (
               <Button
+                key={index}
                 variant="outlined"
                 sx={{
                   borderColor: "rgba(0,0,0,0.1)",

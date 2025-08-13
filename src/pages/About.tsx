@@ -40,7 +40,7 @@ function AboutPage() {
         backgroundColor: "#f9f9f9",
         borderRadius: "8px",
         boxShadow: 2,
-        height: "100vh",
+        minHeight: "100vh",
       }}
     >
       {/* Title Section */}

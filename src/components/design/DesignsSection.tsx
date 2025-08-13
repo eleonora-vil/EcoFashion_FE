@@ -73,31 +73,7 @@ const DesignsSection: React.FC<ProductsSectionProps> = ({
   // //Pagination
   // const productsPerPage = 12; // 9 rows * 4 per row
   const [page, setPage] = useState(currentPage);
-  // //Jump e, setPage] = useState(currentPage);
-  // //Jump To Anchor
-  // const handlePageScrollChange = (id: string, value: number) => {
-  //   setPage(value);
 
-  //   const element = document.getElementById(id);
-  //   const navbarHeight =
-  //     document.querySelector(".MuiAppBar-root")?.clientHeight || 0;
-
-  //   if (element) {
-  //     const y =
-  //       element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-
-  //     window.scrollTo({ top: y, behavior: "smooth" });
-  //   }
-  // };
-  // const paginatedProducts = useMemo(() => {
-  //   const start = (page - 1) * productsPerPage;
-  //   return products.slice(start, start + productsPerPage);
-  // }, [page, products]);
-
-  // const totalPages = Math.ceil(products.length / productsPerPage);
-  // const totalPages = Math.ceil(totalPages / pageSize);
-
-  
   const getCategoryColor = (category: Design["designTypeName"]) => {
     const colors = {
       Áo: "#2196f3",

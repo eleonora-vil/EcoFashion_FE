@@ -33,6 +33,7 @@ import { grey } from "@mui/material/colors";
 import type { Design } from "../../services/api/designService";
 //example
 import ao_linen from "../../assets/pictures/example/ao-linen.webp";
+import { products } from "../../data/productsData";
 interface FashionCardProps {
   product: Design;
   type?: string;
@@ -71,52 +72,12 @@ const FashionCard: React.FC<FashionCardProps> = ({
     return icons[category.normalize("NFC")] || null;
   };
 
-  const getAvailabilityColor = (availability: Design["status"]) => {
-    const colors = {
-      "in stock": "success" as const,
-      limited: "warning" as const,
-      "pre-order": "info" as const,
-      "out-of-stock": "error" as const,
-    };
-    return colors[availability];
+  const getAvailabilityColor = (productCount: Design["productCount"]) => {
+    return productCount > 0 ? "success" : "error";
   };
-
-  const getAvailabilityText = (availability: Design["status"]) => {
-    const texts = {
-      "in stock": "Còn hàng",
-      limited: "Số lượng có hạn",
-      "pre-order": "Đặt trước",
-      "out-of-stock": "Hết hàng",
-    };
-    return texts[availability];
+  const getAvailabilityText = (availability: Design["productCount"]) => {
+    return availability > 0 ? "Còn Hàng" : "Hết Hàng";
   };
-
-  // const getSustainabilityScore = (
-  //   sustainability: Product["sustainability"]
-  // ) => {
-  //   let score = 0;
-
-  //   // Carbon footprint score
-  //   const carbonScores = {
-  //     "very-low": 5,
-  //     low: 4,
-  //     medium: 3,
-  //     high: 2,
-  //     negative: 1,
-  //   };
-  //   score += carbonScores[sustainability.carbonFootprint] * 2;
-
-  //   // Water usage score
-  //   const waterScores = { "very-low": 4, low: 3, medium: 2, high: 1 };
-  //   score += waterScores[sustainability.waterUsage] * 1.5;
-
-  //   // Other factors
-  //   if (sustainability.ethicalManufacturing) score += 3;
-  //   if (sustainability.recyclable) score += 2;
-  //   score += sustainability.durabilityRating * 0.5;
-
-  //   return Math.min(Math.round(score / 4), 5); // Scale to 1-5
-  // };
 
   const formatPriceVND = (price: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -125,27 +86,6 @@ const FashionCard: React.FC<FashionCardProps> = ({
     }).format(price);
   };
 
-  // const handleCardClick = () => {
-  //   if (onSelect) {
-  //     onSelect(product);
-  //   }
-  // };
-
-  // const handleAddToCart = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   if (onAddToCart && product.availability !== "out-of-stock") {
-  //     onAddToCart(product);
-  //   }
-  // };
-
-  // const handleToggleFavorite = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   if (onToggleFavorite) {
-  //     onToggleFavorite(product);
-  //   }
-  // };
-
-  //   const sustainabilityScore = getSustainabilityScore(product.sustainability);
   return (
     <Card
       className="design-fashion-card"
@@ -238,7 +178,7 @@ const FashionCard: React.FC<FashionCardProps> = ({
       {/* Product Image */}
       <CardMedia
         component="img"
-        image={product.imageUrls[0]}
+        image={product.designImageUrls[0]}
         alt={product.name}
         sx={{
           width: "100%",
@@ -246,7 +186,6 @@ const FashionCard: React.FC<FashionCardProps> = ({
           objectFit: "cover",
           cursor: "pointer",
         }}
-        onClick={() => navigate(`/detail/${product.designId}`)}
       />
 
       <Box
@@ -261,7 +200,9 @@ const FashionCard: React.FC<FashionCardProps> = ({
           marginTop: "auto",
           cursor: "pointer",
         }}
-        onClick={() => navigate(`/detail/${product.designId}`)}
+        onClick={() =>
+          navigate(`/detail/${product.designId}/${product.designer.designerId}`)
+        }
       />
 
       {/* Content */}
@@ -343,13 +284,13 @@ const FashionCard: React.FC<FashionCardProps> = ({
                       height: "100%",
                     }}
                   >
-                    {getCategoryIcon(product.designTypeName)}
+                    {getCategoryIcon(product.itemTypeName)}
                   </Box>
                 }
-                label={product.designTypeName}
+                label={product.itemTypeName}
                 size="small"
                 sx={{
-                  bgcolor: getCategoryColor(product.designTypeName),
+                  bgcolor: getCategoryColor(product.itemTypeName),
                   color: "white",
                   fontWeight: "bold",
                   fontSize: "1rem",
@@ -375,7 +316,7 @@ const FashionCard: React.FC<FashionCardProps> = ({
             >
               {product.name}
             </Typography>
-            {/* Rating */}
+            {/* Rating
             <Box display="flex" alignItems="center">
               <Rating
                 value={Math.round(product.productScore)}
@@ -385,7 +326,7 @@ const FashionCard: React.FC<FashionCardProps> = ({
               <Typography variant="body2" ml={1}>
                 ({product.productScore})
               </Typography>
-            </Box>
+            </Box> */}
             {/* Design Price */}
             <Box
               sx={{
@@ -440,29 +381,50 @@ const FashionCard: React.FC<FashionCardProps> = ({
                 mt: 1,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
-                textOverflow: "ellipsis",
+                position: "relative",
+                "& .scroll-content": {
+                  display: "inline-flex",
+                  animation: "scroll-loop 15s linear infinite",
+                },
+                "@keyframes scroll-loop": {
+                  "0%": { transform: "translateX(0)" },
+                  "100%": { transform: "translateX(-50%)" },
+                },
               }}
             >
-              {product.materials.map((mat, index) => (
-                <Chip
-                  key={index}
-                  label={`${mat.materialName} (${Math.round(
-                    mat.persentageUsed
-                  )}%)`}
-                  size="small"
-                  sx={{
-                    backgroundColor: "rgba(220, 252, 231, 1)",
-                    color: "rgba(29, 106, 58, 1)",
-                  }}
-                />
-              ))}
+              <Box className="scroll-content">
+                {[...product.materials, ...product.materials].map(
+                  (mat, index) => {
+                    const totalMeter = product.materials.reduce(
+                      (sum, m) => sum + m.meterUsed,
+                      0
+                    );
+                    const percentage =
+                      totalMeter > 0
+                        ? Math.round((mat.meterUsed / totalMeter) * 100)
+                        : 0;
+
+                    return (
+                      <Chip
+                        key={index}
+                        label={`${mat.materialName} (${percentage}%)`}
+                        size="small"
+                        sx={{
+                          backgroundColor: "rgba(220, 252, 231, 1)",
+                          color: "rgba(29, 106, 58, 1)",
+                        }}
+                      />
+                    );
+                  }
+                )}
+              </Box>
             </Box>
             {/* Available */}
             <Box sx={{ margin: "10px 0" }}>
               <Chip
-                label={getAvailabilityText(product.status)}
+                label={getAvailabilityText(product.productCount)}
                 size="small"
-                color={getAvailabilityColor(product.status)}
+                color={getAvailabilityColor(product.productCount)}
                 icon={<LocalShipping sx={{ fontSize: 16 }} />}
               />
             </Box>

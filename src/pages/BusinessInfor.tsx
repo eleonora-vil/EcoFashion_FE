@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function BusinessInfor() {
   const [tabIndex, setTabIndex] = useState(0);
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
@@ -106,11 +105,11 @@ export default function BusinessInfor() {
                   và giới thiệu sản phẩm thời trang từ vật liệu tái chế của bạn
                   đến mọi người.
                 </Typography>
-                {user?.role?.toLowerCase() === "customer" && (
+                {(!user || user?.role?.toLowerCase() === "customer") && (
                   <Button
                     variant="contained"
                     sx={{ backgroundColor: "#12B76A" }}
-                    onClick={() => handleClick("desginer")}
+                    onClick={() => handleClick("designer")}
                   >
                     Trở thành nhà thiết kế
                   </Button>
@@ -265,7 +264,7 @@ export default function BusinessInfor() {
                   Bắt đầu hành trình trở thành nhà thiết kế thời trang bền vững
                   của bạn ngay hôm nay.
                 </Typography>
-                {user?.role?.toLowerCase() === "customer" && (
+                {(!user || user?.role?.toLowerCase() === "customer") && (
                   <Button
                     variant="contained"
                     sx={{ backgroundColor: "#12B76A" }}
@@ -309,7 +308,7 @@ export default function BusinessInfor() {
                     liệu tái chế của bạn đến các nhà thiết kế thời trang thân
                     thiện với môi trường trên toàn thế giới.
                   </Typography>
-                  {user?.role?.toLowerCase() === "customer" && (
+                  {(!user || user?.role?.toLowerCase() === "customer") && (
                     <Button
                       variant="contained"
                       sx={{ backgroundColor: "white", color: "#2563eb" }}
@@ -336,8 +335,8 @@ export default function BusinessInfor() {
                           Tiếp Cận Trực Tiếp
                         </Typography>
                         <Typography variant="body2">
-                          Kết nối trực tiếp với khách hàng đang tìm kiếm
-                          vật liệu bền vững và tái chế.
+                          Kết nối trực tiếp với khách hàng đang tìm kiếm vật
+                          liệu bền vững và tái chế.
                         </Typography>
                       </CardContent>
                     </Card>
@@ -469,7 +468,7 @@ export default function BusinessInfor() {
                     Bắt đầu kết nối với những khách hàng tiềm năng bền vững ngay
                     hôm nay.
                   </Typography>
-                  {user?.role?.toLowerCase() === "customer" && (
+                  {(!user || user?.role?.toLowerCase() === "customer") && (
                     <Button
                       variant="contained"
                       sx={{ backgroundColor: "#12B76A" }}
